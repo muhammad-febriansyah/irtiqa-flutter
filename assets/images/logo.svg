@@ -1,0 +1,21 @@
+<svg width="200" height="200" viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg">
+  <!-- IRTIQA Logo Placeholder -->
+  <defs>
+    <linearGradient id="gradient" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#4F46E5;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#7C3AED;stop-opacity:1" />
+    </linearGradient>
+  </defs>
+
+  <!-- Background Circle -->
+  <circle cx="100" cy="100" r="95" fill="url(#gradient)" />
+
+  <!-- Crescent Moon (Islamic Symbol) -->
+  <path d="M 140 60 A 50 50 0 1 1 140 140 A 40 40 0 1 0 140 60" fill="white" />
+
+  <!-- Star -->
+  <path d="M 70 100 L 76 115 L 92 115 L 80 124 L 85 139 L 70 130 L 55 139 L 60 124 L 48 115 L 64 115 Z" fill="white" />
+
+  <!-- Text IRTIQA -->
+  <text x="100" y="180" font-family="Arial, sans-serif" font-size="28" font-weight="bold" text-anchor="middle" fill="white">IRTIQA</text>
+</svg>
