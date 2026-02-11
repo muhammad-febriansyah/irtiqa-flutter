@@ -39,7 +39,11 @@ class AccountController extends GetxController {
   }
 
   void goToPrivacyPolicy() {
-    Get.snackbar('Info', 'Halaman Kebijakan akan segera hadir');
+    Get.toNamed('/privacy/policy');
+  }
+
+  void goToTermsAndConditions() {
+    Get.toNamed('/privacy/terms');
   }
 
   Future<void> logout() async {

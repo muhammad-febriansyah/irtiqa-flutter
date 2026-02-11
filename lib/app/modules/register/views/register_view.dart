@@ -1,10 +1,12 @@
 import 'package:cached_network_image/cached_network_image.dart';
+import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 import 'package:iconsax/iconsax.dart';
 import '../../../core/app_colors.dart';
 import '../../../core/api_client.dart';
+import '../../../routes/app_pages.dart';
 import '../controllers/register_controller.dart';
 
 class RegisterView extends GetView<RegisterController> {
@@ -14,9 +16,7 @@ class RegisterView extends GetView<RegisterController> {
   Widget build(BuildContext context) {
     return Scaffold(
       body: Container(
-        decoration: BoxDecoration(
-          color: AppColors.background,
-        ),
+        decoration: BoxDecoration(color: AppColors.background),
         child: SafeArea(
           child: Column(
             children: [
@@ -87,11 +87,10 @@ class RegisterView extends GetView<RegisterController> {
                       SizedBox(height: 30.h),
 
                       Container(
-                        padding: EdgeInsets.all(24.w),
+                        padding: EdgeInsets.all(32.w),
                         decoration: BoxDecoration(
                           color: AppColors.card,
-                          borderRadius: BorderRadius.circular(20.r),
-                          border: Border.all(color: AppColors.border, width: 1),
+                          borderRadius: BorderRadius.circular(32.r),
                         ),
                         child: Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
@@ -120,26 +119,38 @@ class RegisterView extends GetView<RegisterController> {
                               textCapitalization: TextCapitalization.words,
                               decoration: InputDecoration(
                                 labelText: 'Nama Lengkap',
+                                labelStyle: TextStyle(
+                                  color: AppColors.textSecondary,
+                                  fontSize: 14.sp,
+                                ),
                                 hintText: 'Masukkan nama lengkap Anda',
-                                prefixIcon: Icon(Iconsax.user, size: 20.sp),
+                                prefixIcon: Icon(
+                                  Iconsax.user,
+                                  size: 20.sp,
+                                  color: AppColors.primary,
+                                ),
                                 filled: true,
-                                fillColor: AppColors.background,
+                                fillColor: AppColors.primary.withValues(
+                                  alpha: 0.05,
+                                ),
                                 border: OutlineInputBorder(
-                                  borderRadius: BorderRadius.circular(12.r),
+                                  borderRadius: BorderRadius.circular(16.r),
                                   borderSide: BorderSide.none,
                                 ),
                                 enabledBorder: OutlineInputBorder(
-                                  borderRadius: BorderRadius.circular(12.r),
-                                  borderSide: BorderSide(
-                                    color: AppColors.border.withValues(alpha: 0.3),
-                                  ),
+                                  borderRadius: BorderRadius.circular(16.r),
+                                  borderSide: BorderSide.none,
                                 ),
                                 focusedBorder: OutlineInputBorder(
-                                  borderRadius: BorderRadius.circular(12.r),
+                                  borderRadius: BorderRadius.circular(16.r),
                                   borderSide: BorderSide(
                                     color: AppColors.primary,
-                                    width: 2.w,
+                                    width: 1.5.w,
                                   ),
+                                ),
+                                contentPadding: EdgeInsets.symmetric(
+                                  horizontal: 16.w,
+                                  vertical: 18.h,
                                 ),
                               ),
                             ),
@@ -150,26 +161,80 @@ class RegisterView extends GetView<RegisterController> {
                               keyboardType: TextInputType.emailAddress,
                               decoration: InputDecoration(
                                 labelText: 'Email',
+                                labelStyle: TextStyle(
+                                  color: AppColors.textSecondary,
+                                  fontSize: 14.sp,
+                                ),
                                 hintText: 'Masukkan email Anda',
-                                prefixIcon: Icon(Iconsax.sms, size: 20.sp),
+                                prefixIcon: Icon(
+                                  Iconsax.sms,
+                                  size: 20.sp,
+                                  color: AppColors.primary,
+                                ),
                                 filled: true,
-                                fillColor: AppColors.background,
+                                fillColor: AppColors.primary.withValues(
+                                  alpha: 0.05,
+                                ),
                                 border: OutlineInputBorder(
-                                  borderRadius: BorderRadius.circular(12.r),
+                                  borderRadius: BorderRadius.circular(16.r),
                                   borderSide: BorderSide.none,
                                 ),
                                 enabledBorder: OutlineInputBorder(
-                                  borderRadius: BorderRadius.circular(12.r),
-                                  borderSide: BorderSide(
-                                    color: AppColors.border.withValues(alpha: 0.3),
-                                  ),
+                                  borderRadius: BorderRadius.circular(16.r),
+                                  borderSide: BorderSide.none,
                                 ),
                                 focusedBorder: OutlineInputBorder(
-                                  borderRadius: BorderRadius.circular(12.r),
+                                  borderRadius: BorderRadius.circular(16.r),
                                   borderSide: BorderSide(
                                     color: AppColors.primary,
-                                    width: 2.w,
+                                    width: 1.5.w,
                                   ),
+                                ),
+                                contentPadding: EdgeInsets.symmetric(
+                                  horizontal: 16.w,
+                                  vertical: 18.h,
+                                ),
+                              ),
+                            ),
+                            SizedBox(height: 14.h),
+
+                            TextField(
+                              controller: controller.phoneController,
+                              keyboardType: TextInputType.phone,
+                              decoration: InputDecoration(
+                                labelText: 'Nomor WhatsApp',
+                                labelStyle: TextStyle(
+                                  color: AppColors.textSecondary,
+                                  fontSize: 14.sp,
+                                ),
+                                hintText: 'Contoh: 081234567890',
+                                prefixIcon: Icon(
+                                  Iconsax.call,
+                                  size: 20.sp,
+                                  color: AppColors.primary,
+                                ),
+                                filled: true,
+                                fillColor: AppColors.primary.withValues(
+                                  alpha: 0.05,
+                                ),
+                                border: OutlineInputBorder(
+                                  borderRadius: BorderRadius.circular(16.r),
+                                  borderSide: BorderSide.none,
+                                ),
+                                enabledBorder: OutlineInputBorder(
+                                  borderRadius: BorderRadius.circular(16.r),
+                                  borderSide: BorderSide.none,
+                                ),
+                                focusedBorder: OutlineInputBorder(
+                                  borderRadius: BorderRadius.circular(16.r),
+                                  borderSide: BorderSide(
+                                    color: AppColors.primary,
+                                    width: 1.5.w,
+                                  ),
+                                ),
+                                contentPadding: EdgeInsets.symmetric(
+                                  horizontal: 16.w,
+                                  vertical: 18.h,
                                 ),
                               ),
                             ),
@@ -195,22 +260,22 @@ class RegisterView extends GetView<RegisterController> {
                                         controller.togglePasswordVisibility,
                                   ),
                                   filled: true,
-                                  fillColor: AppColors.background,
+                                  fillColor: AppColors.primary.withValues(
+                                    alpha: 0.05,
+                                  ),
                                   border: OutlineInputBorder(
-                                    borderRadius: BorderRadius.circular(12.r),
+                                    borderRadius: BorderRadius.circular(16.r),
                                     borderSide: BorderSide.none,
                                   ),
                                   enabledBorder: OutlineInputBorder(
-                                    borderRadius: BorderRadius.circular(12.r),
-                                    borderSide: BorderSide(
-                                      color: AppColors.border.withValues(alpha: 0.3),
-                                    ),
+                                    borderRadius: BorderRadius.circular(16.r),
+                                    borderSide: BorderSide.none,
                                   ),
                                   focusedBorder: OutlineInputBorder(
-                                    borderRadius: BorderRadius.circular(12.r),
+                                    borderRadius: BorderRadius.circular(16.r),
                                     borderSide: BorderSide(
                                       color: AppColors.primary,
-                                      width: 2.w,
+                                      width: 1.5.w,
                                     ),
                                   ),
                                 ),
@@ -239,22 +304,22 @@ class RegisterView extends GetView<RegisterController> {
                                         .toggleConfirmPasswordVisibility,
                                   ),
                                   filled: true,
-                                  fillColor: AppColors.background,
+                                  fillColor: AppColors.primary.withValues(
+                                    alpha: 0.05,
+                                  ),
                                   border: OutlineInputBorder(
-                                    borderRadius: BorderRadius.circular(12.r),
+                                    borderRadius: BorderRadius.circular(16.r),
                                     borderSide: BorderSide.none,
                                   ),
                                   enabledBorder: OutlineInputBorder(
-                                    borderRadius: BorderRadius.circular(12.r),
-                                    borderSide: BorderSide(
-                                      color: AppColors.border.withValues(alpha: 0.3),
-                                    ),
+                                    borderRadius: BorderRadius.circular(16.r),
+                                    borderSide: BorderSide.none,
                                   ),
                                   focusedBorder: OutlineInputBorder(
-                                    borderRadius: BorderRadius.circular(12.r),
+                                    borderRadius: BorderRadius.circular(16.r),
                                     borderSide: BorderSide(
                                       color: AppColors.primary,
-                                      width: 2.w,
+                                      width: 1.5.w,
                                     ),
                                   ),
                                 ),
@@ -305,6 +370,10 @@ class RegisterView extends GetView<RegisterController> {
                                                   color: AppColors.primary,
                                                   fontWeight: FontWeight.w600,
                                                 ),
+                                                recognizer: TapGestureRecognizer()
+                                                  ..onTap = () => Get.toNamed(
+                                                    Routes.TERMS_AND_CONDITIONS,
+                                                  ),
                                               ),
                                               const TextSpan(text: ' dan '),
                                               TextSpan(
@@ -313,6 +382,13 @@ class RegisterView extends GetView<RegisterController> {
                                                   color: AppColors.primary,
                                                   fontWeight: FontWeight.w600,
                                                 ),
+                                                recognizer:
+                                                    TapGestureRecognizer()
+                                                      ..onTap = () =>
+                                                          Get.toNamed(
+                                                            Routes
+                                                                .PRIVACY_POLICY,
+                                                          ),
                                               ),
                                             ],
                                           ),
@@ -338,12 +414,9 @@ class RegisterView extends GetView<RegisterController> {
                                     disabledBackgroundColor:
                                         AppColors.textMuted,
                                     shape: RoundedRectangleBorder(
-                                      borderRadius: BorderRadius.circular(12.r),
+                                      borderRadius: BorderRadius.circular(16.r),
                                     ),
                                     elevation: 0,
-                                    shadowColor: AppColors.primary.withValues(
-                                      alpha: 0.3,
-                                    ),
                                   ),
                                   child: controller.isLoading.value
                                       ? SizedBox(

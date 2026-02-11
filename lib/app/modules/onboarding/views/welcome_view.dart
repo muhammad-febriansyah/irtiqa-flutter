@@ -25,32 +25,28 @@ class WelcomeView extends GetView<OnboardingController> {
                 final logoUrl = ApiClient.getAssetUrl(logoPath);
 
                 return Container(
-                  width: 140.w,
-                  height: 140.w,
-                  decoration: BoxDecoration(
-                    color: AppColors.card,
-                    borderRadius: BorderRadius.circular(24.r),
-                    border: Border.all(color: AppColors.border, width: 1),
-                  ),
-                  padding: EdgeInsets.all(24.w),
+                  width: 180.w,
+                  height: 180.w,
                   child: logoUrl.isNotEmpty
                       ? Image.network(
                           logoUrl,
                           fit: BoxFit.contain,
                           errorBuilder: (context, error, stackTrace) {
-                            return Icon(
-                              Icons.mosque,
-                              size: 64.sp,
-                              color: AppColors.primary,
+                            return Center(
+                              child: CircularProgressIndicator(
+                                color: AppColors.primary,
+                                strokeWidth: 2.5,
+                              ),
                             );
                           },
                           loadingBuilder: (context, child, loadingProgress) {
                             if (loadingProgress == null) return child;
                             return Center(
                               child: CircularProgressIndicator(
-                                value: loadingProgress.expectedTotalBytes != null
+                                value:
+                                    loadingProgress.expectedTotalBytes != null
                                     ? loadingProgress.cumulativeBytesLoaded /
-                                        loadingProgress.expectedTotalBytes!
+                                          loadingProgress.expectedTotalBytes!
                                     : null,
                                 color: AppColors.primary,
                                 strokeWidth: 2.5,
@@ -58,10 +54,11 @@ class WelcomeView extends GetView<OnboardingController> {
                             );
                           },
                         )
-                      : Icon(
-                          Icons.mosque,
-                          size: 64.sp,
-                          color: AppColors.primary,
+                      : Center(
+                          child: CircularProgressIndicator(
+                            color: AppColors.primary,
+                            strokeWidth: 2.5,
+                          ),
                         ),
                 );
               }),
@@ -70,7 +67,8 @@ class WelcomeView extends GetView<OnboardingController> {
 
               // App Name from API
               Obx(() {
-                final appName = controller.appSettings.value?.appName ?? 'IRTIQA';
+                final appName =
+                    controller.appSettings.value?.appName ?? 'IRTIQA';
                 return Text(
                   'Selamat datang di $appName',
                   style: TextStyle(
@@ -87,7 +85,8 @@ class WelcomeView extends GetView<OnboardingController> {
 
               // Tagline from API
               Obx(() {
-                final tagline = controller.appSettings.value?.tagline ??
+                final tagline =
+                    controller.appSettings.value?.tagline ??
                     'Pendampingan Psiko-Spiritual Islami';
                 return Padding(
                   padding: EdgeInsets.symmetric(horizontal: 16.w),
@@ -148,7 +147,10 @@ class WelcomeView extends GetView<OnboardingController> {
                     onPressed: () => Get.toNamed('/login'),
                     style: TextButton.styleFrom(
                       foregroundColor: AppColors.primary,
-                      padding: EdgeInsets.symmetric(horizontal: 8.w, vertical: 8.h),
+                      padding: EdgeInsets.symmetric(
+                        horizontal: 8.w,
+                        vertical: 8.h,
+                      ),
                     ),
                     child: Text(
                       'Masuk',

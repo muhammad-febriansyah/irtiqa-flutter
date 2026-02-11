@@ -61,14 +61,16 @@ class ConsultantDashboardView extends StatelessWidget {
             color: Colors.white,
           ),
         ),
-        background: Container(
-          color: AppColors.primary,
-        ),
+        background: Container(color: AppColors.primary),
       ),
       actions: [
         IconButton(
+          onPressed: () => Get.toNamed('/consultant/profile'),
+          icon: const Icon(Iconsax.user, color: Colors.white),
+        ),
+        IconButton(
           onPressed: () {},
-          icon: Icon(Iconsax.notification, color: Colors.white),
+          icon: const Icon(Iconsax.notification, color: Colors.white),
         ),
       ],
     );

@@ -19,9 +19,12 @@ class LoginController extends GetxController {
   @override
   void onInit() {
     super.onInit();
-    if (_authRepository.isLoggedIn) {
-      Get.offAllNamed('/home');
-    }
+    // Defer navigation to after build phase to avoid setState during build error
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (_authRepository.isLoggedIn) {
+        Get.offAllNamed('/home');
+      }
+    });
     _loadSettings();
   }
 
@@ -90,11 +93,35 @@ class LoginController extends GetxController {
         );
 
         final user = await _authRepository.getCurrentUser();
-        if (user?.profile?.onboardingCompleted == true) {
-          Get.offAllNamed('/home');
-        } else {
+
+        // Check if onboarding is completed
+        if (user?.profile?.onboardingCompleted != true) {
           Get.offAllNamed('/onboarding');
+          return;
         }
+
+        // Role-based redirect
+        final roles = user?.roles ?? [];
+
+        if (roles.contains('admin')) {
+          // Admin users go to admin dashboard
+          Get.offAllNamed('/admin/dashboard');
+        } else if (roles.contains('consultant') || roles.contains('kyai')) {
+          // Consultant/Kyai users go to consultant dashboard
+          Get.offAllNamed('/consultant/dashboard');
+        } else {
+          // Regular users go to home
+          Get.offAllNamed('/home');
+        }
+      } else if (result['error_code'] == 'EMAIL_NOT_VERIFIED') {
+        // Email not verified — navigate to OTP verification page
+        Get.toNamed(
+          '/otp-verification',
+          arguments: {
+            'email': result['email'] ?? emailController.text.trim(),
+            'purpose': 'registration',
+          },
+        );
       } else {
         Get.snackbar(
           'Kesalahan',
@@ -127,10 +154,6 @@ class LoginController extends GetxController {
   }
 
   void goToForgotPassword() {
-    Get.snackbar(
-      'Info',
-      'Fitur lupa kata sandi akan segera hadir',
-      snackPosition: SnackPosition.BOTTOM,
-    );
+    Get.toNamed('/forgot-password');
   }
 }

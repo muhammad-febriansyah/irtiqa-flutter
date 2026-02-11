@@ -156,25 +156,66 @@ class DreamDetailView extends StatelessWidget {
             ],
           ),
           SizedBox(height: 12.h),
-          Text(
-            dream.title,
-            style: TextStyle(
-              fontSize: 18.sp,
-              fontWeight: FontWeight.bold,
-              color: AppColors.textPrimary,
+          if (dream.dreamTime != null) ...[
+            Row(
+              children: [
+                Icon(Iconsax.clock, size: 16.sp, color: AppColors.textMuted),
+                SizedBox(width: 8.w),
+                Text(
+                  dream.dreamTimeText,
+                  style: TextStyle(
+                    fontSize: 12.sp,
+                    color: AppColors.textMuted,
+                    fontWeight: FontWeight.w500,
+                  ),
+                ),
+              ],
             ),
-          ),
-          SizedBox(height: 12.h),
-          Divider(color: AppColors.border),
-          SizedBox(height: 12.h),
+            SizedBox(height: 12.h),
+          ],
           Text(
-            dream.content,
+            dream.dreamContent,
             style: TextStyle(
               fontSize: 15.sp,
               color: AppColors.textPrimary,
               height: 1.6,
             ),
           ),
+          if (dream.physicalCondition != null || dream.emotionalCondition != null) ...[
+            SizedBox(height: 16.h),
+            Divider(color: AppColors.border),
+            SizedBox(height: 16.h),
+            if (dream.physicalCondition != null)
+              Row(
+                children: [
+                  Icon(Iconsax.health, size: 16.sp, color: AppColors.textMuted),
+                  SizedBox(width: 8.w),
+                  Text(
+                    'Kondisi Fisik: ${dream.physicalConditionText}',
+                    style: TextStyle(
+                      fontSize: 13.sp,
+                      color: AppColors.textSecondary,
+                    ),
+                  ),
+                ],
+              ),
+            if (dream.physicalCondition != null && dream.emotionalCondition != null)
+              SizedBox(height: 8.h),
+            if (dream.emotionalCondition != null)
+              Row(
+                children: [
+                  Icon(Iconsax.heart, size: 16.sp, color: AppColors.textMuted),
+                  SizedBox(width: 8.w),
+                  Text(
+                    'Kondisi Emosi: ${dream.emotionalConditionText}',
+                    style: TextStyle(
+                      fontSize: 13.sp,
+                      color: AppColors.textSecondary,
+                    ),
+                  ),
+                ],
+              ),
+          ],
         ],
       ),
     );

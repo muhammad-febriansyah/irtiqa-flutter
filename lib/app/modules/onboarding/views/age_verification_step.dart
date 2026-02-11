@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
+import 'package:irtiqa/app/core/api_client.dart';
 import 'package:irtiqa/app/modules/onboarding/controllers/onboarding_controller.dart';
 import 'package:intl/intl.dart';
 
@@ -15,42 +17,62 @@ class AgeVerificationStep extends GetView<OnboardingController> {
         children: [
           const SizedBox(height: 20),
 
-          // Icon
+          // Logo from API
           Center(
-            child: Container(
-              padding: const EdgeInsets.all(20),
-              decoration: BoxDecoration(
-                color: Theme.of(context).primaryColor.withValues(alpha: 0.1),
-                shape: BoxShape.circle,
-              ),
-              child: Icon(
-                Icons.cake_outlined,
-                size: 60,
-                color: Theme.of(context).primaryColor,
-              ),
-            ),
+            child: Obx(() {
+              final logoPath = controller.appSettings.value?.logo;
+              final logoUrl = ApiClient.getAssetUrl(logoPath);
+
+              return Container(
+                width: 130.w,
+                height: 130.w,
+                child: logoUrl.isNotEmpty
+                    ? Image.network(
+                        logoUrl,
+                        fit: BoxFit.contain,
+                        errorBuilder: (context, error, stackTrace) => Center(
+                          child: CircularProgressIndicator(
+                            color: Theme.of(context).primaryColor,
+                            strokeWidth: 2,
+                          ),
+                        ),
+                      )
+                    : Center(
+                        child: CircularProgressIndicator(
+                          color: Theme.of(context).primaryColor,
+                          strokeWidth: 2,
+                        ),
+                      ),
+              );
+            }),
           ),
 
           const SizedBox(height: 32),
 
           // Title
-          Text(
-            'Verifikasi Usia',
-            style: Theme.of(context).textTheme.headlineSmall?.copyWith(
-              fontWeight: FontWeight.bold,
-              color: Colors.black87,
+          Center(
+            child: Text(
+              'Verifikasi Usia',
+              style: Theme.of(context).textTheme.headlineSmall?.copyWith(
+                fontWeight: FontWeight.bold,
+                color: Theme.of(context).primaryColor,
+                letterSpacing: -0.5,
+              ),
+              textAlign: TextAlign.center,
             ),
-            textAlign: TextAlign.center,
           ),
 
-          const SizedBox(height: 8),
+          const SizedBox(height: 12),
 
-          Text(
-            'Untuk memastikan layanan sesuai dengan kebutuhan Anda',
-            style: Theme.of(
-              context,
-            ).textTheme.bodyLarge?.copyWith(color: Colors.grey[600]),
-            textAlign: TextAlign.center,
+          Center(
+            child: Text(
+              'Untuk memastikan layanan sesuai dengan kebutuhan Anda',
+              style: Theme.of(context).textTheme.bodyLarge?.copyWith(
+                color: Colors.black54,
+                height: 1.5,
+              ),
+              textAlign: TextAlign.center,
+            ),
           ),
 
           const SizedBox(height: 40),
@@ -77,9 +99,8 @@ class AgeVerificationStep extends GetView<OnboardingController> {
                   vertical: 16,
                 ),
                 decoration: BoxDecoration(
-                  border: Border.all(color: Colors.grey[300]!),
-                  borderRadius: BorderRadius.circular(12),
-                  color: Colors.white,
+                  color: Theme.of(context).primaryColor.withValues(alpha: 0.05),
+                  borderRadius: BorderRadius.circular(16),
                 ),
                 child: Row(
                   children: [
@@ -94,7 +115,7 @@ class AgeVerificationStep extends GetView<OnboardingController> {
                         controller.birthDate.value != null
                             ? DateFormat(
                                 'dd MMMM yyyy',
-                                'id_ID',
+                                'id',
                               ).format(controller.birthDate.value!)
                             : 'Pilih tanggal lahir Anda',
                         style: TextStyle(
@@ -116,23 +137,27 @@ class AgeVerificationStep extends GetView<OnboardingController> {
 
           // Info box
           Container(
-            padding: const EdgeInsets.all(16),
+            padding: const EdgeInsets.all(20),
             decoration: BoxDecoration(
-              color: Colors.blue[50],
-              borderRadius: BorderRadius.circular(12),
-              border: Border.all(color: Colors.blue[200]!),
+              color: Theme.of(context).primaryColor.withValues(alpha: 0.08),
+              borderRadius: BorderRadius.circular(16),
             ),
             child: Row(
               children: [
-                Icon(Icons.info_outline, color: Colors.blue[800], size: 20),
-                const SizedBox(width: 12),
+                Icon(
+                  Icons.info_outline,
+                  color: Theme.of(context).primaryColor,
+                  size: 20,
+                ),
+                const SizedBox(width: 16),
                 Expanded(
                   child: Text(
                     'Usia minimal untuk menggunakan layanan IRTIQA adalah 17 tahun',
                     style: TextStyle(
-                      color: Colors.blue[900],
+                      color: Theme.of(context).primaryColor,
                       fontSize: 13,
                       height: 1.4,
+                      fontWeight: FontWeight.w600,
                     ),
                   ),
                 ),
@@ -217,29 +242,54 @@ class AgeVerificationStep extends GetView<OnboardingController> {
   }
 
   Future<void> _selectDate(BuildContext context) async {
-    final DateTime? picked = await showDatePicker(
-      context: context,
-      initialDate: DateTime.now().subtract(const Duration(days: 365 * 20)),
-      firstDate: DateTime(1950),
-      lastDate: DateTime.now(),
-      locale: const Locale('id', 'ID'),
-      builder: (context, child) {
-        return Theme(
-          data: Theme.of(context).copyWith(
-            colorScheme: ColorScheme.light(
-              primary: Theme.of(context).primaryColor,
+    try {
+      final DateTime? picked = await showDatePicker(
+        context: context,
+        initialDate: DateTime.now().subtract(const Duration(days: 365 * 20)),
+        firstDate: DateTime(1950),
+        lastDate: DateTime.now(),
+        locale: const Locale('id'),
+        builder: (context, child) {
+          return Theme(
+            data: Theme.of(context).copyWith(
+              colorScheme: ColorScheme.light(
+                primary: Theme.of(context).primaryColor,
+              ),
             ),
-          ),
-          child: child!,
-        );
-      },
-      helpText: 'Pilih Tanggal Lahir',
-      cancelText: 'Batal',
-      confirmText: 'Pilih',
-    );
+            child: child!,
+          );
+        },
+        helpText: 'Pilih Tanggal Lahir',
+        cancelText: 'Batal',
+        confirmText: 'Pilih',
+      );
 
-    if (picked != null) {
-      controller.birthDate.value = picked;
+      if (picked != null) {
+        controller.birthDate.value = picked;
+      }
+    } catch (e) {
+      // Fallback if 'id' locale fails
+      final DateTime? picked = await showDatePicker(
+        context: context,
+        initialDate: DateTime.now().subtract(const Duration(days: 365 * 20)),
+        firstDate: DateTime(1950),
+        lastDate: DateTime.now(),
+        builder: (context, child) {
+          return Theme(
+            data: Theme.of(context).copyWith(
+              colorScheme: ColorScheme.light(
+                primary: Theme.of(context).primaryColor,
+              ),
+            ),
+            child: child!,
+          );
+        },
+        helpText: 'Select Birth Date',
+      );
+
+      if (picked != null) {
+        controller.birthDate.value = picked;
+      }
     }
   }
 }

@@ -5,12 +5,14 @@ class AuthProvider {
   Future<Response> register({
     required String name,
     required String email,
+    String? phone,
     required String password,
     required String passwordConfirmation,
   }) async {
     return await ApiClient.post('/auth/register', data: {
       'name': name,
       'email': email,
+      if (phone != null && phone.isNotEmpty) 'phone': phone,
       'password': password,
       'password_confirmation': passwordConfirmation,
     });
@@ -73,6 +75,32 @@ class AuthProvider {
       'email': email,
       'password': password,
       'password_confirmation': passwordConfirmation,
+    });
+  }
+
+  /// Send OTP for verification
+  Future<Response> sendOtp({
+    required String email,
+    String type = 'email',
+    String purpose = 'registration',
+  }) async {
+    return await ApiClient.post('/auth/otp/send', data: {
+      'email': email,
+      'type': type,
+      'purpose': purpose,
+    });
+  }
+
+  /// Verify OTP code
+  Future<Response> verifyOtp({
+    required String email,
+    required String otpCode,
+    String purpose = 'registration',
+  }) async {
+    return await ApiClient.post('/auth/otp/verify', data: {
+      'email': email,
+      'otp_code': otpCode,
+      'purpose': purpose,
     });
   }
 }

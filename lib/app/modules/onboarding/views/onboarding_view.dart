@@ -3,6 +3,7 @@ import 'package:get/get.dart';
 import 'package:irtiqa/app/modules/onboarding/controllers/onboarding_controller.dart';
 import 'package:irtiqa/app/modules/onboarding/views/disclaimer_step.dart';
 import 'package:irtiqa/app/modules/onboarding/views/age_verification_step.dart';
+import 'package:irtiqa/app/modules/onboarding/views/register_step.dart';
 import 'package:irtiqa/app/modules/onboarding/views/profile_step.dart';
 
 class OnboardingView extends GetView<OnboardingController> {
@@ -18,7 +19,7 @@ class OnboardingView extends GetView<OnboardingController> {
             // Progress indicator
             Obx(
               () => LinearProgressIndicator(
-                value: (controller.currentStep.value + 1) / 3,
+                value: (controller.currentStep.value + 1) / 4,
                 backgroundColor: Colors.grey[200],
                 valueColor: AlwaysStoppedAnimation<Color>(
                   Theme.of(context).primaryColor,
@@ -35,6 +36,8 @@ class OnboardingView extends GetView<OnboardingController> {
                   case 1:
                     return const AgeVerificationStep();
                   case 2:
+                    return const RegisterStep();
+                  case 3:
                     return const ProfileStep();
                   default:
                     return const DisclaimerStep();

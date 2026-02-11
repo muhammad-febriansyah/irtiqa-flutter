@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
+import 'package:irtiqa/app/core/api_client.dart';
 import 'package:irtiqa/app/modules/onboarding/controllers/onboarding_controller.dart';
 
 class ProfileStep extends GetView<OnboardingController> {
@@ -14,42 +16,62 @@ class ProfileStep extends GetView<OnboardingController> {
         children: [
           const SizedBox(height: 20),
 
-          // Icon
+          // Logo from API
           Center(
-            child: Container(
-              padding: const EdgeInsets.all(20),
-              decoration: BoxDecoration(
-                color: Theme.of(context).primaryColor.withValues(alpha: 0.1),
-                shape: BoxShape.circle,
-              ),
-              child: Icon(
-                Icons.person_outline,
-                size: 60,
-                color: Theme.of(context).primaryColor,
-              ),
-            ),
+            child: Obx(() {
+              final logoPath = controller.appSettings.value?.logo;
+              final logoUrl = ApiClient.getAssetUrl(logoPath);
+
+              return Container(
+                width: 130.w,
+                height: 130.w,
+                child: logoUrl.isNotEmpty
+                    ? Image.network(
+                        logoUrl,
+                        fit: BoxFit.contain,
+                        errorBuilder: (context, error, stackTrace) => Center(
+                          child: CircularProgressIndicator(
+                            color: Theme.of(context).primaryColor,
+                            strokeWidth: 2,
+                          ),
+                        ),
+                      )
+                    : Center(
+                        child: CircularProgressIndicator(
+                          color: Theme.of(context).primaryColor,
+                          strokeWidth: 2,
+                        ),
+                      ),
+              );
+            }),
           ),
 
           const SizedBox(height: 32),
 
           // Title
-          Text(
-            'Lengkapi Profil',
-            style: Theme.of(context).textTheme.headlineSmall?.copyWith(
-              fontWeight: FontWeight.bold,
-              color: Colors.black87,
+          Center(
+            child: Text(
+              'Lengkapi Profil',
+              style: Theme.of(context).textTheme.headlineSmall?.copyWith(
+                fontWeight: FontWeight.bold,
+                color: Theme.of(context).primaryColor,
+                letterSpacing: -0.5,
+              ),
+              textAlign: TextAlign.center,
             ),
-            textAlign: TextAlign.center,
           ),
 
-          const SizedBox(height: 8),
+          const SizedBox(height: 12),
 
-          Text(
-            'Informasi ini bersifat opsional dan dapat diubah nanti',
-            style: Theme.of(
-              context,
-            ).textTheme.bodyLarge?.copyWith(color: Colors.grey[600]),
-            textAlign: TextAlign.center,
+          Center(
+            child: Text(
+              'Informasi ini bersifat opsional dan dapat diubah nanti',
+              style: Theme.of(context).textTheme.bodyLarge?.copyWith(
+                color: Colors.black54,
+                height: 1.5,
+              ),
+              textAlign: TextAlign.center,
+            ),
           ),
 
           const SizedBox(height: 40),
@@ -57,7 +79,7 @@ class ProfileStep extends GetView<OnboardingController> {
           // Pseudonym field
           _buildTextField(
             label: 'Nama Panggilan (Opsional)',
-            hint: 'Nama yang ingin Anda gunakan',
+            hint: 'Masukkan nama panggilan',
             icon: Icons.badge_outlined,
             onChanged: (value) => controller.pseudonym.value = value,
           ),
@@ -67,7 +89,7 @@ class ProfileStep extends GetView<OnboardingController> {
           // Province field
           _buildTextField(
             label: 'Provinsi (Opsional)',
-            hint: 'Contoh: Jawa Barat',
+            hint: 'Masukkan provinsi',
             icon: Icons.location_on_outlined,
             onChanged: (value) => controller.province.value = value,
           ),
@@ -77,7 +99,7 @@ class ProfileStep extends GetView<OnboardingController> {
           // City field
           _buildTextField(
             label: 'Kota/Kabupaten (Opsional)',
-            hint: 'Contoh: Bandung',
+            hint: 'Masukkan kota/kabupaten',
             icon: Icons.location_city_outlined,
             onChanged: (value) => controller.city.value = value,
           ),
@@ -87,7 +109,7 @@ class ProfileStep extends GetView<OnboardingController> {
           // Primary concern field
           _buildTextField(
             label: 'Kebutuhan Utama (Opsional)',
-            hint: 'Apa yang ingin Anda konsultasikan?',
+            hint: 'Masukkan kebutuhan Anda',
             icon: Icons.help_outline,
             maxLines: 3,
             onChanged: (value) => controller.primaryConcern.value = value,
@@ -97,23 +119,27 @@ class ProfileStep extends GetView<OnboardingController> {
 
           // Privacy note
           Container(
-            padding: const EdgeInsets.all(16),
+            padding: const EdgeInsets.all(20),
             decoration: BoxDecoration(
-              color: Colors.green[50],
-              borderRadius: BorderRadius.circular(12),
-              border: Border.all(color: Colors.green[200]!),
+              color: Theme.of(context).primaryColor.withValues(alpha: 0.08),
+              borderRadius: BorderRadius.circular(16),
             ),
             child: Row(
               children: [
-                Icon(Icons.lock_outline, color: Colors.green[800], size: 20),
-                const SizedBox(width: 12),
+                Icon(
+                  Icons.lock_outline,
+                  color: Theme.of(context).primaryColor,
+                  size: 20,
+                ),
+                const SizedBox(width: 16),
                 Expanded(
                   child: Text(
                     'Semua informasi Anda dijaga kerahasiaannya dan hanya digunakan untuk memberikan layanan terbaik',
                     style: TextStyle(
-                      color: Colors.green[900],
+                      color: Theme.of(context).primaryColor,
                       fontSize: 13,
                       height: 1.4,
+                      fontWeight: FontWeight.w600,
                     ),
                   ),
                 ),
@@ -239,25 +265,34 @@ class ProfileStep extends GetView<OnboardingController> {
           maxLines: maxLines,
           decoration: InputDecoration(
             hintText: hint,
-            hintStyle: TextStyle(color: Colors.grey[400]),
-            prefixIcon: Icon(icon, color: Get.theme.primaryColor, size: 20),
-            border: OutlineInputBorder(
-              borderRadius: BorderRadius.circular(12),
-              borderSide: BorderSide(color: Colors.grey[300]!),
-            ),
-            enabledBorder: OutlineInputBorder(
-              borderRadius: BorderRadius.circular(12),
-              borderSide: BorderSide(color: Colors.grey[300]!),
-            ),
-            focusedBorder: OutlineInputBorder(
-              borderRadius: BorderRadius.circular(12),
-              borderSide: BorderSide(color: Get.theme.primaryColor, width: 2),
+            hintStyle: TextStyle(color: Colors.black.withValues(alpha: 0.3)),
+            prefixIcon: Icon(
+              icon,
+              color: Theme.of(Get.context!).primaryColor,
+              size: 20,
             ),
             filled: true,
-            fillColor: Colors.white,
+            fillColor: Theme.of(
+              Get.context!,
+            ).primaryColor.withValues(alpha: 0.05),
+            border: OutlineInputBorder(
+              borderRadius: BorderRadius.circular(16),
+              borderSide: BorderSide.none,
+            ),
+            enabledBorder: OutlineInputBorder(
+              borderRadius: BorderRadius.circular(16),
+              borderSide: BorderSide.none,
+            ),
+            focusedBorder: OutlineInputBorder(
+              borderRadius: BorderRadius.circular(16),
+              borderSide: BorderSide(
+                color: Theme.of(Get.context!).primaryColor,
+                width: 2,
+              ),
+            ),
             contentPadding: const EdgeInsets.symmetric(
               horizontal: 16,
-              vertical: 14,
+              vertical: 16,
             ),
           ),
         ),

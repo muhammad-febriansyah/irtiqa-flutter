@@ -1,5 +1,6 @@
 class ConsultationModel {
   final int id;
+  final String? ticketNumber;
   final int userId;
   final int? consultantId;
   final int categoryId;
@@ -18,6 +19,7 @@ class ConsultationModel {
 
   ConsultationModel({
     required this.id,
+    this.ticketNumber,
     required this.userId,
     this.consultantId,
     required this.categoryId,
@@ -38,6 +40,7 @@ class ConsultationModel {
   factory ConsultationModel.fromJson(Map<String, dynamic> json) {
     return ConsultationModel(
       id: json['id'] as int,
+      ticketNumber: json['ticket_number'] as String?,
       userId: json['user_id'] as int,
       consultantId: json['consultant_id'] as int?,
       categoryId: json['category_id'] as int,
@@ -61,6 +64,7 @@ class ConsultationModel {
   Map<String, dynamic> toJson() {
     return {
       'id': id,
+      'ticket_number': ticketNumber,
       'user_id': userId,
       'consultant_id': consultantId,
       'category_id': categoryId,

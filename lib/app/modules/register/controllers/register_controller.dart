@@ -10,6 +10,7 @@ class RegisterController extends GetxController {
 
   final nameController = TextEditingController();
   final emailController = TextEditingController();
+  final phoneController = TextEditingController();
   final passwordController = TextEditingController();
   final confirmPasswordController = TextEditingController();
 
@@ -42,6 +43,7 @@ class RegisterController extends GetxController {
   void onClose() {
     nameController.dispose();
     emailController.dispose();
+    phoneController.dispose();
     passwordController.dispose();
     confirmPasswordController.dispose();
     super.onClose();
@@ -87,6 +89,23 @@ class RegisterController extends GetxController {
         colorText: Colors.white,
       );
       return;
+    }
+
+    // Validate phone number (optional but if filled must be valid)
+    if (phoneController.text.trim().isNotEmpty) {
+      final phone = phoneController.text.trim();
+      // Check if phone starts with 08 or +62 and has 10-15 digits
+      if (!RegExp(r'^(08|\+62)[0-9]{8,13}$').hasMatch(phone)) {
+        Get.snackbar(
+          'Kesalahan',
+          'Format nomor WhatsApp tidak valid. Contoh: 081234567890',
+          snackPosition: SnackPosition.BOTTOM,
+          backgroundColor: Colors.red,
+          colorText: Colors.white,
+          duration: Duration(seconds: 4),
+        );
+        return;
+      }
     }
 
     if (passwordController.text.isEmpty) {
@@ -150,20 +169,50 @@ class RegisterController extends GetxController {
       final result = await _authRepository.register(
         name: nameController.text.trim(),
         email: emailController.text.trim(),
+        phone: phoneController.text.trim().isEmpty
+            ? null
+            : phoneController.text.trim(),
         password: passwordController.text,
         passwordConfirmation: confirmPasswordController.text,
       );
 
       if (result['success'] == true) {
-        Get.snackbar(
-          'Berhasil',
-          result['message'] ?? 'Registrasi berhasil',
-          snackPosition: SnackPosition.BOTTOM,
-          backgroundColor: Colors.green,
-          colorText: Colors.white,
-        );
+        final email = result['email'] ?? emailController.text.trim();
+        final otpSent = result['otp_sent'] ?? false;
 
-        Get.offAllNamed('/onboarding');
+        if (otpSent) {
+          Get.snackbar(
+            'Berhasil',
+            'Registrasi berhasil! Silakan cek email untuk kode OTP.',
+            snackPosition: SnackPosition.BOTTOM,
+            backgroundColor: Colors.green,
+            colorText: Colors.white,
+            duration: Duration(seconds: 3),
+          );
+
+          // Navigate to OTP verification
+          final otpResult = await Get.toNamed(
+            '/otp-verification',
+            arguments: {
+              'email': email,
+              'purpose': 'registration',
+            },
+          );
+
+          // If OTP verified successfully, go to onboarding
+          if (otpResult == true) {
+            Get.offAllNamed('/onboarding');
+          }
+        } else {
+          Get.snackbar(
+            'Peringatan',
+            'Registrasi berhasil tapi OTP gagal dikirim. Silakan hubungi admin.',
+            snackPosition: SnackPosition.BOTTOM,
+            backgroundColor: Colors.orange,
+            colorText: Colors.white,
+            duration: Duration(seconds: 5),
+          );
+        }
       } else {
         if (result['errors'] != null) {
           final errors = result['errors'] as Map<String, dynamic>;

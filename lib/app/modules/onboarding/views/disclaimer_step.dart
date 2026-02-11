@@ -1,6 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
+import 'package:irtiqa/app/core/api_client.dart';
 import 'package:irtiqa/app/modules/onboarding/controllers/onboarding_controller.dart';
+import 'package:irtiqa/app/routes/app_pages.dart';
 
 class DisclaimerStep extends GetView<OnboardingController> {
   const DisclaimerStep({super.key});
@@ -14,79 +17,97 @@ class DisclaimerStep extends GetView<OnboardingController> {
         children: [
           const SizedBox(height: 20),
 
-          // Icon
+          // Logo from API
           Center(
-            child: Container(
-              padding: const EdgeInsets.all(20),
-              decoration: BoxDecoration(
-                color: Theme.of(context).primaryColor.withValues(alpha: 0.1),
-                shape: BoxShape.circle,
-              ),
-              child: Icon(
-                Icons.info_outline,
-                size: 60,
-                color: Theme.of(context).primaryColor,
-              ),
-            ),
+            child: Obx(() {
+              final logoPath = controller.appSettings.value?.logo;
+              final logoUrl = ApiClient.getAssetUrl(logoPath);
+
+              return Container(
+                width: 130.w,
+                height: 130.w,
+                child: logoUrl.isNotEmpty
+                    ? Image.network(
+                        logoUrl,
+                        fit: BoxFit.contain,
+                        errorBuilder: (context, error, stackTrace) => Center(
+                          child: CircularProgressIndicator(
+                            color: Theme.of(context).primaryColor,
+                            strokeWidth: 2,
+                          ),
+                        ),
+                      )
+                    : Center(
+                        child: CircularProgressIndicator(
+                          color: Theme.of(context).primaryColor,
+                          strokeWidth: 2,
+                        ),
+                      ),
+              );
+            },),
           ),
 
           const SizedBox(height: 32),
 
           // Title
-          Text(
-            'Selamat Datang di IRTIQA',
-            style: Theme.of(context).textTheme.headlineSmall?.copyWith(
-              fontWeight: FontWeight.bold,
-              color: Colors.black87,
+          Center(
+            child: Text(
+              'Selamat Datang di IRTIQA',
+              style: Theme.of(context).textTheme.headlineSmall?.copyWith(
+                fontWeight: FontWeight.bold,
+                color: Theme.of(context).primaryColor,
+                letterSpacing: -0.5,
+              ),
+              textAlign: TextAlign.center,
             ),
-            textAlign: TextAlign.center,
           ),
 
           const SizedBox(height: 12),
 
-          Text(
-            'Di sini, Anda didampingi secara tenang dan bertahap.',
-            style: Theme.of(context).textTheme.titleMedium?.copyWith(
-              color: Colors.grey[600],
-              fontSize: 16,
-              height: 1.5,
+          Center(
+            child: Text(
+              'Di sini, Anda didampingi secara tenang dan bertahap.',
+              style: Theme.of(context).textTheme.bodyLarge?.copyWith(
+                color: Colors.black54,
+                height: 1.5,
+              ),
+              textAlign: TextAlign.center,
             ),
-            textAlign: TextAlign.center,
           ),
 
-          const SizedBox(height: 32),
+          const SizedBox(height: 40),
 
           // Disclaimer content
           Container(
-            padding: const EdgeInsets.all(20),
+            padding: const EdgeInsets.all(24),
             decoration: BoxDecoration(
-              color: Colors.grey[50],
-              borderRadius: BorderRadius.circular(12),
-              border: Border.all(color: Colors.grey[300]!),
+              color: Theme.of(context).primaryColor.withValues(alpha: 0.03),
+              borderRadius: BorderRadius.circular(20),
             ),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(
                   'Kesepahaman Awal',
-                  style: Theme.of(context).textTheme.titleMedium?.copyWith(
+                  style: TextStyle(
+                    fontSize: 18,
                     fontWeight: FontWeight.bold,
-                    color: Colors.black87,
+                    color: Theme.of(context).primaryColor,
                   ),
                 ),
-                const SizedBox(height: 12),
+                const SizedBox(height: 16),
 
                 Text(
                   'IRTIQA bersifat pendampingan dan edukasi.\nKami tidak menetapkan kepastian perkara ghaib dan tidak menggantikan tenaga medis atau fatwa ulama.',
-                  style: const TextStyle(
+                  style: TextStyle(
                     fontSize: 14,
                     height: 1.6,
-                    color: Colors.black87,
+                    color: Colors.black.withValues(alpha: 0.7),
                     fontWeight: FontWeight.w500,
                   ),
                 ),
 
-                const SizedBox(height: 20),
+                const SizedBox(height: 24),
 
                 Obx(
                   () => _buildDisclaimerCheckbox(
@@ -123,22 +144,25 @@ class DisclaimerStep extends GetView<OnboardingController> {
 
           // Important note
           Container(
-            padding: const EdgeInsets.all(16),
+            padding: const EdgeInsets.all(20),
             decoration: BoxDecoration(
-              color: Colors.amber[50],
-              borderRadius: BorderRadius.circular(12),
-              border: Border.all(color: Colors.amber[200]!),
+              color: Theme.of(context).primaryColor.withValues(alpha: 0.08),
+              borderRadius: BorderRadius.circular(16),
             ),
             child: Row(
               children: [
-                Icon(Icons.warning_amber_rounded, color: Colors.amber[800]),
-                const SizedBox(width: 12),
+                Icon(
+                  Icons.verified_user_outlined,
+                  color: Theme.of(context).primaryColor,
+                ),
+                const SizedBox(width: 16),
                 Expanded(
                   child: Text(
                     'Layanan ini untuk usia minimal 17 tahun',
                     style: TextStyle(
-                      color: Colors.amber[900],
-                      fontWeight: FontWeight.w500,
+                      color: Theme.of(context).primaryColor,
+                      fontWeight: FontWeight.w600,
+                      fontSize: 14,
                     ),
                   ),
                 ),
@@ -189,20 +213,34 @@ class DisclaimerStep extends GetView<OnboardingController> {
 
           const SizedBox(height: 16),
 
-          // Privacy policy link
-          Center(
-            child: TextButton(
-              onPressed: () {
-                Get.toNamed('/privacy/policy');
-              },
-              child: Text(
-                'Baca Kebijakan Privasi',
-                style: TextStyle(
-                  color: Theme.of(context).primaryColor,
-                  decoration: TextDecoration.underline,
+          // Legal links
+          Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              TextButton(
+                onPressed: () => Get.toNamed(Routes.TERMS_AND_CONDITIONS),
+                child: Text(
+                  'Syarat & Ketentuan',
+                  style: TextStyle(
+                    color: Theme.of(context).primaryColor,
+                    fontSize: 13,
+                    decoration: TextDecoration.underline,
+                  ),
                 ),
               ),
-            ),
+              const Text(' • ', style: TextStyle(color: Colors.grey)),
+              TextButton(
+                onPressed: () => Get.toNamed(Routes.PRIVACY_POLICY),
+                child: Text(
+                  'Kebijakan Privasi',
+                  style: TextStyle(
+                    color: Theme.of(context).primaryColor,
+                    fontSize: 13,
+                    decoration: TextDecoration.underline,
+                  ),
+                ),
+              ),
+            ],
           ),
 
           const SizedBox(height: 20),

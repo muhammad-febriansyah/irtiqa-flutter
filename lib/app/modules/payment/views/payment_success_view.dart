@@ -102,8 +102,15 @@ class PaymentSuccessView extends GetView<PaymentController> {
                 width: double.infinity,
                 height: 50.h,
                 child: ElevatedButton(
-                  onPressed: () {
-                    Get.offAllNamed('/bottomnavigator');
+                  onPressed: () async {
+                    final transaction = controller.currentTransaction.value;
+                    if (transaction?.programId != null) {
+                      // Navigate to program detail
+                      Get.offAllNamed('/program/detail/${transaction!.programId}');
+                    } else {
+                      // Fallback to home
+                      Get.offAllNamed('/bottomnavigator');
+                    }
                   },
                   style: ElevatedButton.styleFrom(
                     backgroundColor: AppColors.primary,

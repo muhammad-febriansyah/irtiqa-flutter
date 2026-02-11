@@ -4,6 +4,7 @@ class TransactionModel {
   final int id;
   final String invoiceNumber;
   final int userId;
+  final int? programId;
   final PackageModel? package;
   final double amount;
   final double adminFee;
@@ -25,6 +26,7 @@ class TransactionModel {
     required this.id,
     required this.invoiceNumber,
     required this.userId,
+    this.programId,
     this.package,
     required this.amount,
     required this.adminFee,
@@ -48,6 +50,7 @@ class TransactionModel {
       id: json['id'] as int,
       invoiceNumber: json['invoice_number'] as String,
       userId: json['user_id'] as int,
+      programId: json['program_id'] as int?,
       package: json['package'] != null
           ? PackageModel.fromJson(json['package'] as Map<String, dynamic>)
           : null,
@@ -78,6 +81,7 @@ class TransactionModel {
       'id': id,
       'invoice_number': invoiceNumber,
       'user_id': userId,
+      'program_id': programId,
       'package': package?.toJson(),
       'amount': amount,
       'admin_fee': adminFee,

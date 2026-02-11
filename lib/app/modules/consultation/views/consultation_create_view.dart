@@ -4,7 +4,11 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 import 'package:iconsax/iconsax.dart';
 import '../../../core/app_colors.dart';
+import '../../../core/risk_assessment.dart';
+import '../../../widgets/crisis_warning_dialog.dart';
 import '../controllers/consultation_controller.dart';
+import '../../crisis/controllers/crisis_controller.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 class ConsultationCreateView extends StatefulWidget {
   const ConsultationCreateView({super.key});
@@ -23,9 +27,31 @@ class _ConsultationCreateViewState extends State<ConsultationCreateView> {
   bool _isLoading = false;
 
   final List<Map<String, String>> _categories = [
-    {'value': 'psycho_spiritual', 'label': 'Psiko-Spiritual'},
-    {'value': 'dream', 'label': 'Mimpi & Tidur'},
-    {'value': 'other', 'label': 'Lainnya'},
+    {
+      'value': 'inner_restlessness',
+      'label': '🧠 Kegelisahan Batin',
+      'icon': '🧠'
+    },
+    {
+      'value': 'disturbing_dreams',
+      'label': '🌙 Mimpi yang Mengganggu',
+      'icon': '🌙'
+    },
+    {
+      'value': 'waswas_worship',
+      'label': '🕊️ Waswas & Ketenangan Ibadah',
+      'icon': '🕊️'
+    },
+    {
+      'value': 'family_children',
+      'label': '👨‍👩‍👧 Keluarga & Anak',
+      'icon': '👨‍👩‍👧'
+    },
+    {
+      'value': 'psycho_spiritual_education',
+      'label': '📚 Edukasi Psiko-Spiritual',
+      'icon': '📚'
+    },
   ];
 
   @override
@@ -484,35 +510,89 @@ class _ConsultationCreateViewState extends State<ConsultationCreateView> {
   void _submitForm() async {
     final form = _formKey.currentState;
     if (form != null && form.validate()) {
-      setState(() {
-        _isLoading = true;
-      });
+      final description = _descriptionController.text.trim();
 
-      final controller = Get.find<ConsultationController>();
-      final success = await controller.createConsultation(
-        subject: _subjectController.text.trim(),
-        description: _descriptionController.text.trim(),
-        category: _selectedCategory ?? 'other',
-        urgency: _selectedUrgency ?? 'sedang',
-      );
+      // Check for high-risk keywords
+      final assessment = RiskAssessment.assess(description);
 
-      setState(() {
-        _isLoading = false;
-      });
-
-      if (success) {
-        _showAutoGuidance();
-      } else {
-        Get.snackbar(
-          'Gagal',
-          'Terjadi kesalahan saat mengirim pengajuan. Silakan coba lagi.',
-          backgroundColor: Colors.red.withValues(alpha: 0.1),
-          colorText: Colors.red,
-          snackPosition: SnackPosition.TOP,
-          margin: EdgeInsets.all(16.w),
-          borderRadius: 12.r,
+      if (assessment['requires_warning'] == true) {
+        // Show crisis warning dialog
+        await _showCrisisWarning(
+          assessment['risk_level'] as String,
+          onProceed: () => _proceedWithSubmit(),
         );
+      } else {
+        // Proceed directly
+        await _proceedWithSubmit();
       }
+    }
+  }
+
+  Future<void> _proceedWithSubmit() async {
+    setState(() {
+      _isLoading = true;
+    });
+
+    final controller = Get.find<ConsultationController>();
+    final success = await controller.createConsultation(
+      subject: _subjectController.text.trim(),
+      description: _descriptionController.text.trim(),
+      category: _selectedCategory ?? 'other',
+      urgency: _selectedUrgency ?? 'sedang',
+    );
+
+    setState(() {
+      _isLoading = false;
+    });
+
+    if (success) {
+      _showAutoGuidance();
+    } else {
+      Get.snackbar(
+        'Gagal',
+        'Terjadi kesalahan saat mengirim pengajuan. Silakan coba lagi.',
+        backgroundColor: Colors.red.withValues(alpha: 0.1),
+        colorText: Colors.red,
+        snackPosition: SnackPosition.TOP,
+        margin: EdgeInsets.all(16.w),
+        borderRadius: 12.r,
+      );
+    }
+  }
+
+  Future<void> _showCrisisWarning(String riskLevel, {required VoidCallback onProceed}) async {
+    await showDialog(
+      context: context,
+      barrierDismissible: false,
+      builder: (context) => CrisisWarningDialog(
+        riskLevel: riskLevel,
+        onProceed: () {
+          Navigator.pop(context);
+          onProceed();
+        },
+        onCallHotline: () async {
+          final uri = Uri.parse('tel:119');
+          if (await canLaunchUrl(uri)) {
+            await launchUrl(uri);
+          }
+        },
+        onPanicButton: () {
+          Navigator.pop(context);
+          _triggerPanicButton();
+        },
+      ),
+    );
+  }
+
+  void _triggerPanicButton() async {
+    try {
+      final crisisController = Get.find<CrisisController>();
+      await crisisController.triggerPanicButton();
+    } catch (e) {
+      // CrisisController not found, create it
+      Get.put(CrisisController());
+      final crisisController = Get.find<CrisisController>();
+      await crisisController.triggerPanicButton();
     }
   }
 

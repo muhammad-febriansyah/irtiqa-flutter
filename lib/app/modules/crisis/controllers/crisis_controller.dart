@@ -18,35 +18,43 @@ class CrisisController extends GetxController {
     try {
       final response = await ApiClient.get('/crisis/hotlines');
 
-      if (response.statusCode == 200) {
-        final data = response.data['data'];
-        hotlines.value = [
-          {
-            'name': 'Hotline Kesehatan Jiwa',
-            'number': data['hotline'] ?? '119',
-            'description': 'Layanan darurat kesehatan jiwa 24/7',
-            'icon': 'phone',
-          },
-          {
-            'name': 'Hotline Kemenkes',
-            'number': '500-567',
-            'description': 'Layanan konsultasi kesehatan',
-            'icon': 'hospital',
-          },
-        ];
+      if (response.statusCode == 200 && response.data['success'] == true) {
+        final List<dynamic> data = response.data['data'];
+        hotlines.value = data.map((h) => {
+          'name': h['name'] ?? 'Hotline',
+          'number': h['number'] ?? '119',
+          'description': h['description'] ?? '',
+          'type': h['type'] ?? 'other',
+        }).toList();
+      } else {
+        _setDefaultHotlines();
       }
     } catch (e) {
-      // Error loading hotlines: $e
-      // Use default hotlines
-      hotlines.value = [
-        {
-          'name': 'Hotline Kesehatan Jiwa',
-          'number': '119',
-          'description': 'Layanan darurat kesehatan jiwa 24/7',
-          'icon': 'phone',
-        },
-      ];
+      _setDefaultHotlines();
     }
+  }
+
+  void _setDefaultHotlines() {
+    hotlines.value = [
+      {
+        'name': 'Hotline Kesehatan Jiwa',
+        'number': '119',
+        'description': 'Layanan darurat kesehatan jiwa 24/7',
+        'type': 'national',
+      },
+      {
+        'name': 'Sejiwa',
+        'number': '119 ext 8',
+        'description': 'Layanan konseling kesehatan jiwa',
+        'type': 'ngo',
+      },
+      {
+        'name': 'Into The Light',
+        'number': '021-7884-5555',
+        'description': 'Pencegahan bunuh diri',
+        'type': 'ngo',
+      },
+    ];
   }
 
   /// Trigger panic button

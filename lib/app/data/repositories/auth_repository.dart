@@ -11,6 +11,7 @@ class AuthRepository {
   Future<Map<String, dynamic>> register({
     required String name,
     required String email,
+    String? phone,
     required String password,
     required String passwordConfirmation,
   }) async {
@@ -18,20 +19,17 @@ class AuthRepository {
       final response = await _authProvider.register(
         name: name,
         email: email,
+        phone: phone,
         password: password,
         passwordConfirmation: passwordConfirmation,
       );
 
       if (response.data['success'] == true) {
-        final token = response.data['data']['token'];
-        final user = UserModel.fromJson(response.data['data']['user']);
-
-        ApiClient.saveToken(token);
-        _storage.write('user_data', response.data['data']['user']);
-
+        // Don't save token yet - user needs to verify email first
         return {
           'success': true,
-          'user': user,
+          'email': response.data['data']['email'],
+          'otp_sent': response.data['data']['otp_sent'] ?? false,
           'message': response.data['message'],
         };
       }
@@ -111,6 +109,17 @@ class AuthRepository {
       if (e.response?.data != null) {
         final responseData = e.response!.data;
 
+        // Check for EMAIL_NOT_VERIFIED error
+        if (responseData['error_code'] == 'EMAIL_NOT_VERIFIED') {
+          return {
+            'success': false,
+            'error_code': 'EMAIL_NOT_VERIFIED',
+            'message': responseData['message'],
+            'email': responseData['data']?['email'],
+            'otp_sent': responseData['data']?['otp_sent'] ?? false,
+          };
+        }
+
         if (responseData['message'] != null) {
           final message = responseData['message'].toString();
 
@@ -139,6 +148,60 @@ class AuthRepository {
         'errors': e.response?.data['errors'],
       };
     }
+  }
+
+  /// Send OTP for email verification
+  Future<Map<String, dynamic>> sendOtp({
+    required String email,
+    String type = 'email',
+    String purpose = 'registration',
+  }) async {
+    try {
+      final response = await _authProvider.sendOtp(
+        email: email,
+        type: type,
+        purpose: purpose,
+      );
+
+      return {
+        'success': response.data['success'] ?? false,
+        'message': response.data['message'],
+        'expires_at': response.data['expires_at'],
+      };
+    } on DioException catch (e) {
+      return {
+        'success': false,
+        'message': e.response?.data['message'] ?? 'Gagal mengirim OTP',
+      };
+    }
+  }
+
+  /// Verify OTP code
+  Future<Map<String, dynamic>> verifyOtp({
+    required String email,
+    required String otpCode,
+    String purpose = 'registration',
+  }) async {
+    try {
+      final response = await _authProvider.verifyOtp(
+        email: email,
+        otpCode: otpCode,
+        purpose: purpose,
+      );
+
+      return response.data;
+    } on DioException catch (e) {
+      return {
+        'success': false,
+        'message': e.response?.data['message'] ?? 'Verifikasi OTP gagal',
+      };
+    }
+  }
+
+  /// Save user data and token (helper method)
+  Future<void> saveUserData(Map<String, dynamic> user, String token) async {
+    ApiClient.saveToken(token);
+    _storage.write('user_data', user);
   }
 
   Future<Map<String, dynamic>> logout() async {
@@ -174,6 +237,67 @@ class AuthRepository {
       return null;
     } catch (e) {
       return null;
+    }
+  }
+
+  /// Request password reset - send OTP
+  Future<Map<String, dynamic>> requestPasswordReset({
+    required String identifier,
+    required String type, // 'email' or 'whatsapp'
+  }) async {
+    try {
+      final response = await ApiClient.post(
+        '/auth/send-otp',
+        data: {'email': identifier, 'type': type, 'purpose': 'forgot_password'},
+      );
+
+      return {
+        'success': response.statusCode == 200,
+        'message': response.data['message'],
+        'data': response.data['data'],
+      };
+    } on DioException catch (e) {
+      return {
+        'success': false,
+        'message': e.response?.data['message'] ?? 'Gagal mengirim kode OTP',
+      };
+    } catch (e) {
+      return {
+        'success': false,
+        'message': 'Terjadi kesalahan: ${e.toString()}',
+      };
+    }
+  }
+
+  /// Reset password with new password (after OTP verification)
+  Future<Map<String, dynamic>> resetPassword({
+    required String email,
+    required String password,
+  }) async {
+    try {
+      final response = await ApiClient.post(
+        '/auth/reset-password',
+        data: {
+          'email': email,
+          'password': password,
+          'password_confirmation': password,
+        },
+      );
+
+      return {
+        'success': response.statusCode == 200,
+        'message': response.data['message'],
+      };
+    } on DioException catch (e) {
+      return {
+        'success': false,
+        'message': e.response?.data['message'] ?? 'Gagal mereset kata sandi',
+      };
+    } catch (e) {
+      return {
+        'success': false,
+        'message': 'Terjadi kesalahan: ${e.toString()}',
+      };
     }
   }
 

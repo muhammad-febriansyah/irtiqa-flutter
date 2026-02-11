@@ -21,19 +21,21 @@ class DreamRepository {
   }
 
   Future<DreamModel?> createDream({
-    required String title,
-    required String content,
-    String? emotionalState,
-    List<String>? keywords,
-    DateTime? dreamDate,
+    required String dreamContent,
+    required DateTime dreamDate,
+    String? dreamTime,
+    String? physicalCondition,
+    String? emotionalCondition,
+    required bool disclaimerChecked,
   }) async {
     try {
       final response = await _provider.createDream(
-        title: title,
-        content: content,
-        emotionalState: emotionalState,
-        keywords: keywords,
+        dreamContent: dreamContent,
         dreamDate: dreamDate,
+        dreamTime: dreamTime,
+        physicalCondition: physicalCondition,
+        emotionalCondition: emotionalCondition,
+        disclaimerChecked: disclaimerChecked,
       );
 
       if (response.data['success'] == true) {
@@ -60,6 +62,34 @@ class DreamRepository {
     }
   }
 
+  Future<DreamModel?> updateDream({
+    required int id,
+    String? dreamContent,
+    DateTime? dreamDate,
+    String? dreamTime,
+    String? physicalCondition,
+    String? emotionalCondition,
+  }) async {
+    try {
+      final response = await _provider.updateDream(
+        id: id,
+        dreamContent: dreamContent,
+        dreamDate: dreamDate,
+        dreamTime: dreamTime,
+        physicalCondition: physicalCondition,
+        emotionalCondition: emotionalCondition,
+      );
+
+      if (response.data['success'] == true) {
+        return DreamModel.fromJson(response.data['data']);
+      }
+
+      return null;
+    } on DioException {
+      rethrow;
+    }
+  }
+
   Future<bool> deleteDream(int id) async {
     try {
       final response = await _provider.deleteDream(id);
@@ -69,3 +99,4 @@ class DreamRepository {
     }
   }
 }
+

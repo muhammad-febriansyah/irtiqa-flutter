@@ -28,7 +28,8 @@ class SplashController extends GetxController {
       appSettings.value = _settingsRepository.getCachedSettings();
     }
 
-    await Future.delayed(const Duration(seconds: 2));
+    // Skip splash delay - langsung check auth
+    // await Future.delayed(const Duration(seconds: 2));
 
     if (_authRepository.isLoggedIn) {
       final user = await _authRepository.getCurrentUser();
@@ -36,7 +37,7 @@ class SplashController extends GetxController {
         if (user.profile?.onboardingCompleted == true) {
           Get.offAllNamed('/home');
         } else {
-          Get.offAllNamed('/welcome');
+          Get.offAllNamed('/onboarding');
         }
       } else {
         Get.offAllNamed('/welcome');

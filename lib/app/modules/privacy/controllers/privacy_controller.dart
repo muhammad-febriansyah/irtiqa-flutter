@@ -8,12 +8,16 @@ class PrivacyController extends GetxController {
 
   var isLoading = false.obs;
   final Rx<PrivacyPolicyModel?> privacyPolicy = Rx<PrivacyPolicyModel?>(null);
+  final Rx<PrivacyPolicyModel?> termsAndConditions = Rx<PrivacyPolicyModel?>(
+    null,
+  );
   var dataRetentionInfo = <String, dynamic>{}.obs;
 
   @override
   void onInit() {
     super.onInit();
     loadPrivacyPolicy();
+    loadTermsAndConditions();
     loadDataRetentionInfo();
   }
 
@@ -29,6 +33,23 @@ class PrivacyController extends GetxController {
       }
     } catch (e) {
       // Error loading privacy policy: $e
+    } finally {
+      isLoading.value = false;
+    }
+  }
+
+  /// Load terms and conditions
+  Future<void> loadTermsAndConditions() async {
+    try {
+      isLoading.value = true;
+      final response = await ApiClient.get('/privacy/terms');
+
+      if (response.statusCode == 200 && response.data['success'] == true) {
+        final termsData = response.data['data'];
+        termsAndConditions.value = PrivacyPolicyModel.fromJson(termsData);
+      }
+    } catch (e) {
+      // Error loading terms: $e
     } finally {
       isLoading.value = false;
     }
@@ -84,9 +105,10 @@ class PrivacyController extends GetxController {
     try {
       isLoading.value = true;
 
-      final response = await ApiClient.delete('/privacy/delete-account', data: {
-        'password': password,
-      });
+      final response = await ApiClient.delete(
+        '/privacy/delete-account',
+        data: {'password': password},
+      );
 
       if (response.statusCode == 200) {
         Get.snackbar(

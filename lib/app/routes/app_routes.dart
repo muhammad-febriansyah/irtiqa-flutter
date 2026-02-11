@@ -8,8 +8,10 @@ abstract class Routes {
   static const SPLASH = _Paths.SPLASH;
   static const LOGIN = _Paths.LOGIN;
   static const REGISTER = _Paths.REGISTER;
+  static const OTP_VERIFICATION = _Paths.OTP_VERIFICATION;
   static const BOTTOMNAVIGATOR = _Paths.BOTTOMNAVIGATOR;
   static const CONSULTATION_CREATE = _Paths.CONSULTATION_CREATE;
+  static const CONSULTATION_DETAIL = _Paths.CONSULTATION_DETAIL;
   static const DREAM = _Paths.DREAM;
   static const DREAM_CREATE = _Paths.DREAM_CREATE;
   static const DREAM_DETAIL = _Paths.DREAM_DETAIL;
@@ -25,12 +27,16 @@ abstract class Routes {
   static const JOURNAL_CREATE = _Paths.JOURNAL_CREATE;
   static const CONSULTANT_APPLICATION = _Paths.CONSULTANT_APPLICATION;
   static const PRIVACY_POLICY = _Paths.PRIVACY_POLICY;
+  static const TERMS_AND_CONDITIONS = _Paths.TERMS_AND_CONDITIONS;
   static const DATA_MANAGEMENT = _Paths.DATA_MANAGEMENT;
   static const DREAM_EDUCATION_GATE = _Paths.DREAM_EDUCATION_GATE;
   static const CONSULTANT_DASHBOARD = _Paths.CONSULTANT_DASHBOARD;
   static const CONSULTANT_QUEUE = _Paths.CONSULTANT_QUEUE;
   static const CONSULTANT_ACTIVE = _Paths.CONSULTANT_ACTIVE;
   static const CONSULTANT_TICKET_DETAIL = _Paths.CONSULTANT_TICKET_DETAIL;
+  static const CONSULTANT_PROFILE = _Paths.CONSULTANT_PROFILE;
+  static const CONSULTANT_PROFILE_EDIT = _Paths.CONSULTANT_PROFILE_EDIT;
+  static const PROGRAM_DETAIL = _Paths.PROGRAM_DETAIL;
   static const PACKAGE_LIST = _Paths.PACKAGE_LIST;
   static const PAYMENT_CHECKOUT = _Paths.PAYMENT_CHECKOUT;
   static const PAYMENT_METHOD_SELECTION = _Paths.PAYMENT_METHOD_SELECTION;
@@ -39,6 +45,8 @@ abstract class Routes {
   static const PAYMENT_MANUAL_TRANSFER = _Paths.PAYMENT_MANUAL_TRANSFER;
   static const TRANSACTION_HISTORY = _Paths.TRANSACTION_HISTORY;
   static const TRANSACTION_DETAIL = _Paths.TRANSACTION_DETAIL;
+  static const CHAT = _Paths.CHAT;
+  static const FORGOT_PASSWORD = _Paths.FORGOT_PASSWORD;
 }
 
 abstract class _Paths {
@@ -47,8 +55,10 @@ abstract class _Paths {
   static const SPLASH = '/splash';
   static const LOGIN = '/login';
   static const REGISTER = '/register';
+  static const OTP_VERIFICATION = '/otp-verification';
   static const BOTTOMNAVIGATOR = '/bottomnavigator';
   static const CONSULTATION_CREATE = '/consultation/create';
+  static const CONSULTATION_DETAIL = '/consultation/detail/:id';
   static const DREAM = '/dream';
   static const DREAM_CREATE = '/dream/create';
   static const DREAM_DETAIL = '/dream/detail';
@@ -64,12 +74,16 @@ abstract class _Paths {
   static const JOURNAL_CREATE = '/journal/create';
   static const CONSULTANT_APPLICATION = '/consultant-application';
   static const PRIVACY_POLICY = '/privacy/policy';
+  static const TERMS_AND_CONDITIONS = '/privacy/terms';
   static const DATA_MANAGEMENT = '/privacy/data-management';
   static const DREAM_EDUCATION_GATE = '/dream/education-gate';
   static const CONSULTANT_DASHBOARD = '/consultant/dashboard';
   static const CONSULTANT_QUEUE = '/consultant/queue';
   static const CONSULTANT_ACTIVE = '/consultant/active';
   static const CONSULTANT_TICKET_DETAIL = '/consultant/ticket/:id';
+  static const CONSULTANT_PROFILE = '/consultant/profile';
+  static const CONSULTANT_PROFILE_EDIT = '/consultant/profile/edit';
+  static const PROGRAM_DETAIL = '/program/detail/:id';
   static const PACKAGE_LIST = '/package/list';
   static const PAYMENT_CHECKOUT = '/payment/checkout';
   static const PAYMENT_METHOD_SELECTION = '/payment/method-selection';
@@ -78,4 +92,6 @@ abstract class _Paths {
   static const PAYMENT_MANUAL_TRANSFER = '/payment/manual-transfer';
   static const TRANSACTION_HISTORY = '/transaction/history';
   static const TRANSACTION_DETAIL = '/transaction/detail/:id';
+  static const CHAT = '/chat';
+  static const FORGOT_PASSWORD = '/forgot-password';
 }

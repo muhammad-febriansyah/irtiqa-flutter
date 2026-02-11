@@ -209,24 +209,13 @@ class DreamView extends GetView<DreamController> {
                 ),
                 SizedBox(height: 14.h),
                 Text(
-                  dream.title,
-                  style: TextStyle(
-                    fontSize: 16.sp,
-                    fontWeight: FontWeight.bold,
-                    color: AppColors.textPrimary,
-                  ),
-                  maxLines: 1,
-                  overflow: TextOverflow.ellipsis,
-                ),
-                SizedBox(height: 6.h),
-                Text(
-                  dream.content,
+                  dream.dreamContent,
                   style: TextStyle(
                     fontSize: 14.sp,
                     color: AppColors.textSecondary,
                     height: 1.5,
                   ),
-                  maxLines: 2,
+                  maxLines: 3,
                   overflow: TextOverflow.ellipsis,
                 ),
               ],

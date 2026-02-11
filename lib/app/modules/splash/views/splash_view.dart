@@ -40,10 +40,10 @@ class SplashView extends GetView<SplashController> {
                           logoUrl,
                           fit: BoxFit.contain,
                           errorBuilder: (context, error, stackTrace) {
-                            return const Icon(
-                              Icons.mosque,
-                              size: 80,
-                              color: Color(0xFF009689),
+                            return const Center(
+                              child: CircularProgressIndicator(
+                                color: Color(0xFF2D5A27),
+                              ),
                             );
                           },
                           loadingBuilder: (context, child, loadingProgress) {
@@ -60,10 +60,10 @@ class SplashView extends GetView<SplashController> {
                             );
                           },
                         )
-                      : const Icon(
-                          Icons.mosque,
-                          size: 80,
-                          color: Color(0xFF009689),
+                      : const Center(
+                          child: CircularProgressIndicator(
+                            color: Color(0xFF2D5A27),
+                          ),
                         ),
                 ),
               );

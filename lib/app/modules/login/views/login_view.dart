@@ -14,9 +14,7 @@ class LoginView extends GetView<LoginController> {
   Widget build(BuildContext context) {
     return Scaffold(
       body: Container(
-        decoration: BoxDecoration(
-          color: AppColors.background,
-        ),
+        decoration: BoxDecoration(color: AppColors.background),
         child: SafeArea(
           child: SingleChildScrollView(
             padding: EdgeInsets.symmetric(horizontal: 24.w),
@@ -49,12 +47,11 @@ class LoginView extends GetView<LoginController> {
                                 ),
                               ),
                             ),
-                            errorWidget: (context, url, error) =>
-                                Image.asset(
-                                  'assets/images/logo.png',
-                                  width: 120.w,
-                                  height: 120.h,
-                                ),
+                            errorWidget: (context, url, error) => Image.asset(
+                              'assets/images/logo.png',
+                              width: 120.w,
+                              height: 120.h,
+                            ),
                           )
                         : Image.asset(
                             key: const ValueKey('fallback_logo'),
@@ -67,11 +64,10 @@ class LoginView extends GetView<LoginController> {
                 SizedBox(height: 40.h),
 
                 Container(
-                  padding: EdgeInsets.all(24.w),
+                  padding: EdgeInsets.all(32.w),
                   decoration: BoxDecoration(
                     color: AppColors.card,
-                    borderRadius: BorderRadius.circular(20.r),
-                    border: Border.all(color: AppColors.border, width: 1),
+                    borderRadius: BorderRadius.circular(32.r),
                   ),
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
@@ -99,26 +95,36 @@ class LoginView extends GetView<LoginController> {
                         keyboardType: TextInputType.emailAddress,
                         decoration: InputDecoration(
                           labelText: 'Email',
+                          labelStyle: TextStyle(
+                            color: AppColors.textSecondary,
+                            fontSize: 14.sp,
+                          ),
                           hintText: 'Masukkan email Anda',
-                          prefixIcon: Icon(Iconsax.sms, size: 20.sp),
+                          prefixIcon: Icon(
+                            Iconsax.sms,
+                            size: 20.sp,
+                            color: AppColors.primary,
+                          ),
                           filled: true,
-                          fillColor: AppColors.background,
+                          fillColor: AppColors.primary.withValues(alpha: 0.05),
                           border: OutlineInputBorder(
-                            borderRadius: BorderRadius.circular(12.r),
+                            borderRadius: BorderRadius.circular(16.r),
                             borderSide: BorderSide.none,
                           ),
                           enabledBorder: OutlineInputBorder(
-                            borderRadius: BorderRadius.circular(12.r),
-                            borderSide: BorderSide(
-                              color: AppColors.border.withValues(alpha: 0.3),
-                            ),
+                            borderRadius: BorderRadius.circular(16.r),
+                            borderSide: BorderSide.none,
                           ),
                           focusedBorder: OutlineInputBorder(
-                            borderRadius: BorderRadius.circular(12.r),
+                            borderRadius: BorderRadius.circular(16.r),
                             borderSide: BorderSide(
                               color: AppColors.primary,
-                              width: 2.w,
+                              width: 1.5.w,
                             ),
+                          ),
+                          contentPadding: EdgeInsets.symmetric(
+                            horizontal: 16.w,
+                            vertical: 18.h,
                           ),
                         ),
                       ),
@@ -130,35 +136,48 @@ class LoginView extends GetView<LoginController> {
                           obscureText: !controller.isPasswordVisible.value,
                           decoration: InputDecoration(
                             labelText: 'Kata Sandi',
+                            labelStyle: TextStyle(
+                              color: AppColors.textSecondary,
+                              fontSize: 14.sp,
+                            ),
                             hintText: 'Masukkan kata sandi Anda',
-                            prefixIcon: Icon(Iconsax.lock, size: 20.sp),
+                            prefixIcon: Icon(
+                              Iconsax.lock,
+                              size: 20.sp,
+                              color: AppColors.primary,
+                            ),
                             suffixIcon: IconButton(
                               icon: Icon(
                                 controller.isPasswordVisible.value
                                     ? Iconsax.eye
                                     : Iconsax.eye_slash,
                                 size: 20.sp,
+                                color: AppColors.textSecondary,
                               ),
                               onPressed: controller.togglePasswordVisibility,
                             ),
                             filled: true,
-                            fillColor: AppColors.background,
+                            fillColor: AppColors.primary.withValues(
+                              alpha: 0.05,
+                            ),
                             border: OutlineInputBorder(
-                              borderRadius: BorderRadius.circular(12.r),
+                              borderRadius: BorderRadius.circular(16.r),
                               borderSide: BorderSide.none,
                             ),
                             enabledBorder: OutlineInputBorder(
-                              borderRadius: BorderRadius.circular(12.r),
-                              borderSide: BorderSide(
-                                color: AppColors.border.withValues(alpha: 0.3),
-                              ),
+                              borderRadius: BorderRadius.circular(16.r),
+                              borderSide: BorderSide.none,
                             ),
                             focusedBorder: OutlineInputBorder(
-                              borderRadius: BorderRadius.circular(12.r),
+                              borderRadius: BorderRadius.circular(16.r),
                               borderSide: BorderSide(
                                 color: AppColors.primary,
-                                width: 2.w,
+                                width: 1.5.w,
                               ),
+                            ),
+                            contentPadding: EdgeInsets.symmetric(
+                              horizontal: 16.w,
+                              vertical: 18.h,
                             ),
                           ),
                         ),
@@ -199,10 +218,9 @@ class LoginView extends GetView<LoginController> {
                               backgroundColor: AppColors.primary,
                               disabledBackgroundColor: AppColors.textMuted,
                               shape: RoundedRectangleBorder(
-                                borderRadius: BorderRadius.circular(12.r),
+                                borderRadius: BorderRadius.circular(16.r),
                               ),
                               elevation: 0,
-                              shadowColor: AppColors.primary.withValues(alpha: 0.3),
                             ),
                             child: controller.isLoading.value
                                 ? SizedBox(
